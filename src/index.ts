@@ -1,5 +1,3 @@
-import {type} from "os";
-
 interface Options {
     width?: number;
     height?: number;
@@ -60,12 +58,12 @@ export class Artist {
             cursor: options.cursor || 'crosshair'
         };
 
-        this.start();
+        this._start();
     }
 
-    start () :void
+    _start () :void
     {
-        this.createCanvas();
+        this._createCanvas();
         this.setWidth(this.width);
         this.setHeight(this.height);
 
@@ -80,11 +78,11 @@ export class Artist {
         this.setLineColor(this.lineColor);
         this.setLineWidth(this.lineWidth);
 
-        this.addListeners();
-        this.createContext();
+        this._addListeners();
+        this._createContext();
     }
 
-    createCanvas () :void
+    _createCanvas () :void
     {
         if (!this.wrapper) return console.warn("Wrapper element is not defined");
 
@@ -97,28 +95,28 @@ export class Artist {
         this.wrapper.append(this.canvas);
     }
 
-    addListeners () :void
+    _addListeners () :void
     {
         if (!this.canvas) return;
 
         this.canvas.addEventListener('mousedown', event => {
-            this.setCords(event);
+            this._setCords(event);
             this.setMouseDown(true);
         });
 
         this.canvas.addEventListener('mouseup', event => {
-            this.setCords(event);
+            this._setCords(event);
             this.setMouseDown(false);
             if (this.ctx) this.ctx.beginPath();
         });
 
         this.canvas.addEventListener('mousemove', event => {
-            this.setCords(event);
-            this.drawLine();
+            this._setCords(event);
+            this._drawLine();
         });
 
         this.canvas.addEventListener('mouseleave', event => {
-            this.setCords(event);
+            this._setCords(event);
             this.setMouseDown(false);
 
             if (this.ctx)
@@ -126,7 +124,7 @@ export class Artist {
         });
     }
 
-    createContext () :void
+    _createContext () :void
     {
         if (!this.canvas) return console.warn('Canvas element os not defined');
 
@@ -136,7 +134,7 @@ export class Artist {
         this.ctx = context;
     }
 
-    drawLine () :void
+    _drawLine () :void
     {
         if (!this.ctx || !this.mouse.mousedown) return;
 
@@ -159,8 +157,103 @@ export class Artist {
         this.ctx.moveTo(this.mouse.x, this.mouse.y)
     }
 
-    setMouseCursor (value: 'default' | 'crosshair' | 'pointer') :void
+    /**
+     * Clear all canvas
+     */
+    clearAll () :void
     {
+        if (!this.ctx) return;
+
+        this.ctx.clearRect(0, 0, this.width, this.height);
+    }
+
+    getImage () : string | undefined
+    {
+        if (!this.canvas || !this.ctx) return;
+
+        const imageString = this.canvas.toDataURL('image/png', 0.5);
+
+        if (imageString && imageString.length)
+            return imageString;
+    }
+
+    /**
+     * Get element which contains canvas
+     *
+     * @return {HTMLDivElement | undefined}
+     */
+    getWrapper () :HTMLDivElement | undefined
+    {
+        return this.wrapper;
+    }
+
+    /**
+     * Get canvas element
+     *
+     * @return {HTMLCanvasElement | undefined}
+     */
+    getCanvas () :HTMLCanvasElement | undefined
+    {
+        return this.canvas;
+    }
+
+    /**
+     * Get canvas background color
+     *
+     * @return {string}
+     */
+    getBackground () :string
+    {
+        return this.bg;
+    }
+
+    /**
+     * Get canvas border data (size {number}, color {HEX}, style {string})
+     *
+     * @param {string} value    size, color, style
+     *
+     * @return {number | string}
+     */
+    getBorder (value: 'size' | 'color' | 'style') :number | string | undefined
+    {
+        if (!this.border.hasOwnProperty(value)) return;
+
+        return this.border[value];
+    }
+
+    /**
+     * Get current drawing line color
+     *
+     * @return {string} HEX color
+     */
+    getLineColor () :string
+    {
+        return this.lineColor;
+    }
+
+    /**
+     * Get current line width
+     *
+     * @return {number}
+     */
+    getLineWidth () :number
+    {
+        return this.lineWidth;
+    }
+
+    /**
+     * Set cursor icon 'default' | 'crosshair' | 'pointer'. Default - crosshair.
+     *
+     * @param {'default' | 'crosshair' | 'pointer'} value  -|The text name of cursor.
+     * @param {function} callback                          -|Callback function. argument - current cursor name.
+     *                                                      |Must return boolean. If function return false
+     *                                                      |method "SetWidth" won't work
+     *
+     */
+    setMouseCursor (value: 'default' | 'crosshair' | 'pointer', callback: (cursor?: string) => (boolean) = () => true) :void
+    {
+        if (callback)
+            if (!callback(this.mouse.cursor)) return;
         const setCursorToCanvas = (cursor: 'default' | 'crosshair' | 'pointer') => {
             if (!this.canvas) return;
 
@@ -172,70 +265,52 @@ export class Artist {
         setCursorToCanvas(value);
     }
 
-    clearAll () :void
+    /**
+     * Set width for canvas
+     * @param {number} value       -|Width of canvas
+     * @param {function} callback  -|Callback function. argument - current width. Must return boolean.
+     *                              |If function return false method "SetWidth" won't work
+     * @return {void}
+     */
+    setWidth (value: number, callback: (width?: number) => (boolean) = () => true) :void
     {
-        if (!this.ctx) return;
+        if (callback)
+            if (!callback(this.width)) return;
 
-        this.ctx.clearRect(0, 0, this.width, this.height);
-    }
-
-    getImage ()
-    {
-        if (!this.canvas || !this.ctx) return;
-
-        const imageString = this.canvas.toDataURL('image/png', 0.5);
-
-        if (imageString && imageString.length)
-            return imageString;
-    }
-
-    getWrapper () :HTMLDivElement | undefined
-    {
-        return this.wrapper;
-    }
-
-    getCanvas () :HTMLCanvasElement | undefined
-    {
-        return this.canvas;
-    }
-
-    getBackground () :string
-    {
-        return this.bg;
-    }
-
-    getBorder (value: 'size' | 'color' | 'style') :number | string | undefined
-    {
-        if (!this.border.hasOwnProperty(value)) return;
-
-        return this.border[value];
-    }
-
-    getLineColor () :string
-    {
-        return this.lineColor;
-    }
-
-    getLineWidth () :number
-    {
-        return this.lineWidth;
-    }
-
-    setWidth (value: number) :void
-    {
         if (this.canvas)
-        this.canvas.width = value - this.border.size * 2;
+            this.canvas.width = value - this.border.size * 2;
         this.wrapper.style.width = value + this.sizeValue;
     }
-    setHeight (value: number) :void
+
+    /**
+     * Set height for canvas
+     * @param {number} value       -|Width of canvas
+     * @param {function} callback  -|Callback function. argument - current height. Must return boolean.
+     *                              |If function return false method "SetHeight" won't work
+     * @return {void}
+     */
+    setHeight (value: number, callback: (height?: number) => (boolean) = () => true) :void
     {
+        if (callback)
+            if (!callback(this.height)) return;
+
         if (this.canvas)
-        this.canvas.height = value  - this.border.size * 2;
+            this.canvas.height = value  - this.border.size * 2;
         this.wrapper.style.height = value + this.sizeValue;
     }
 
-    setBg (value: any) :void
+    /**
+     * Set background for canvas
+     * @param {string} value       -|Width of canvas
+     * @param {function} callback  -|Callback function. argument - current background. Must return boolean.
+     *                              |If function return false method "setBg" won't work
+     * @return {void}
+     */
+    setBg (value: any, callback: (background?: string) => (boolean) = () => true) :void
     {
+        if (callback)
+            if (!callback(this.bg)) return;
+
         if (typeof value !== "string") return;
         if (!regexHEX.test(value)) return;
 
@@ -243,20 +318,40 @@ export class Artist {
             this.canvas.style.backgroundColor = value;
     }
 
-    setCords (event: MouseEvent) :void
+    /**
+     * Set mouse coords
+     * @param event                -|Mouse event
+     * @param {function} callback  -|Callback function. argument - current cords object {x: number, y: number}.
+     *                              |Must return boolean. If function return false method "_setCords" won't work
+     * @return {void}
+     */
+    private _setCords (event: MouseEvent, callback: (cords?: {x: number, y: number}) => (boolean) = () => true) :void
     {
+        if (callback)
+            if (!callback({x: this.mouse.x, y: this.mouse.y})) return;
+
         const cords = getCords(event);
 
         this.mouse.x = cords.x;
         this.mouse.y = cords.y;
     }
 
-    setBorderSize (val: any) :void
+    /**
+     * Set canvas border size
+     * @param {number} value       -|Border size value in "px"
+     * @param {function} callback  -|Callback function. argument - current border size object.
+     *                              |Must return boolean. If function return false method "setBorderSize" won't work
+     * @return {void}
+     */
+    setBorderSize (value: any, callback: (border?: number) => (boolean) = () => true) :void
     {
-        if (typeof val !== "number") return;
+        if (callback)
+            if (!callback(this.border.size)) return;
 
-        if (val !== this.border.size)
-            this.border.size = val;
+        if (typeof value !== "number") return;
+
+        if (value !== this.border.size)
+            this.border.size = value;
 
         if (this.border.style === 'none')
             this.border.style = 'solid';
@@ -272,13 +367,23 @@ export class Artist {
         }
     }
 
-    setBorderColor (val: any) :void
+    /**
+     * Set color for canvas border
+     * @param {string} value       -|Border color value in "HEX"
+     * @param {function} callback  -|Callback function. argument - current border color.
+     *                              |Must return boolean. If function return false method "setBorderColor" won't work
+     * @return {void}
+     */
+    setBorderColor (value: any, callback: (color?: string) => (boolean) = () => true) :void
     {
-        if (typeof val !== "string") return;
-        if (!regexHEX.test(val)) return;
+        if (callback)
+            if (!callback(this.border.color)) return;
 
-        if (val !== this.border.color)
-            this.border.color = val;
+        if (typeof value !== "string") return;
+        if (!regexHEX.test(value)) return;
+
+        if (value !== this.border.color)
+            this.border.color = value;
 
         if (this.border.style === 'none')
             this.border.style = 'solid';
@@ -287,34 +392,74 @@ export class Artist {
             this.wrapper.style.borderColor = this.border.color;
     }
 
-    setBorderStyle (val: any) :void
+    /**
+     * Set style for canvas border
+     * @param {string} value       -|Border style value: 'solid', 'dashed' etc.
+     * @param {function} callback  -|Callback function. argument - current border style.
+     *                              |Must return boolean. If function return false method "setBorderStyle" won't work
+     * @return {void}
+     */
+    setBorderStyle (value: any, callback: (style?: string) => (boolean) = () => true) :void
     {
-        if (typeof val !== "string") return;
+        if (callback)
+            if (!callback(this.border.style)) return;
 
-        if (val !== this.border.style)
-            this.border.style = val;
+        if (typeof value !== "string") return;
+
+        if (value !== this.border.style)
+            this.border.style = value;
 
         if (this.wrapper)
             this.wrapper.style.borderStyle = this.border.style;
     }
 
-    setMouseDown (value: boolean | undefined = undefined) :void
+    /**
+     * Set value for click 'mousedown'/'mouseup' in boolean
+     * @param {boolean} value      -|Set boolean value what mean 'click'
+     * @param {function} callback  -|Callback function. argument - current border style.
+     *                              |Must return boolean. If function return false method "setMouseDown" won't work
+     * @return {void}
+     */
+    setMouseDown (value: boolean | undefined = undefined, callback: (clicked?: boolean) => (boolean) = () => true) :void
     {
+        if (callback)
+            if (!callback(this.mouse.mousedown)) return;
+
         if (value === undefined) this.mouse.mousedown = !this.mouse.mousedown;
 
         if (typeof value === "boolean")
             this.mouse.mousedown = value;
     }
 
-    setLineWidth (value: any) :void
+    /**
+     * Set line width
+     * @param {number} value       -|Line width
+     * @param {function} callback  -|Callback function. argument {number} - current line width.
+     *                              |Must return boolean. If function return false method "setLineWidth" won't work
+     * @return {void}
+     */
+    setLineWidth (value: any, callback: (clicked?: number) => (boolean) = () => true) :void
     {
+        if (callback)
+            if (!callback(this.lineWidth)) return;
+
         if (typeof value !== 'number') return;
 
         this.lineWidth = value <= 0 ? 1 : value > 10 ? 10 : value;
     }
 
-    setLineColor (value: any) :void
+    /**
+     * Set line color
+     * @param {number} value       -|Line color "HEX"
+     * @param {function} callback  -|Callback function. argument {string(HEX)} - current line width.
+     *                              |Must return boolean. If function return false method "setLineColor" won't work
+     * @return {void}
+     */
+    setLineColor (value: any, callback: (clicked?: string) => (boolean) = () => true) :void
     {
+        if (callback)
+            if (!callback(this.lineColor)) return;
+
         if (typeof value !== "string") return;
 
         if (!regexHEX.test(value)) return;
