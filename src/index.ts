@@ -458,7 +458,7 @@ export class Artist {
 
     /**
      * Set line color
-     * @param {number} value       -|Line color "HEX"
+     * @param {string} value       -|Line color "HEX"
      * @param {function} callback  -|Callback function. argument {string(HEX)} - current line width.
      *                              |Must return boolean. If function return false method "setLineColor" won't work
      * @return {void}
