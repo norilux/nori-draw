@@ -215,14 +215,14 @@ export class Artist {
         return this.bg;
     }
 
+    getBorder (value: 'size' | 'color' | 'style') :number | string | undefined
     /**
      * Get canvas border data (size {number}, color {HEX}, style {string})
      *
      * @param {string} value    size, color, style
      *
-     * @return {number | string}
+     * @return {number | string | undefined}
      */
-    getBorder (value: 'size' | 'color' | 'style') :number | string | undefined
     {
         if (!this.border.hasOwnProperty(value)) return;
 
