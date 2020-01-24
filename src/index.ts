@@ -170,14 +170,14 @@ export class Artist {
     /**
      * Get image string (base64) in PNG or JPEG
      *
-     * @return {string} BASE64
+     * @return {string | undefined} BASE64
      * @param format
      */
     getImageB64 (format: any = "png") : string | undefined
     {
         if (!this.canvas || !this.ctx || typeof format !== "string") return;
 
-        let imageFormat = ['png', 'jpeg'].includes(format) ? format : 'png';
+        const imageFormat = ['png', 'jpeg'].includes(format) ? format : 'png';
 
         const imageString = this.canvas.toDataURL('image/' + imageFormat, 0.5);
 
