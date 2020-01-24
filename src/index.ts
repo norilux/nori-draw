@@ -167,11 +167,19 @@ export class Artist {
         this.ctx.clearRect(0, 0, this.width, this.height);
     }
 
-    getImage () : string | undefined
+    /**
+     * Get image string (base64) in PNG or JPEG
+     *
+     * @return {string} BASE64
+     * @param format
+     */
+    getImageB64 (format: any = "png") : string | undefined
     {
-        if (!this.canvas || !this.ctx) return;
+        if (!this.canvas || !this.ctx || typeof format !== "string") return;
 
-        const imageString = this.canvas.toDataURL('image/png', 0.5);
+        let imageFormat = ['png', 'jpeg'].includes(format) ? format : 'png';
+
+        const imageString = this.canvas.toDataURL('image/' + imageFormat, 0.5);
 
         if (imageString && imageString.length)
             return imageString;
