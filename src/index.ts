@@ -11,7 +11,13 @@ interface Options {
     borderStyle?: string;
 }
 
-const getCords = (event: MouseEvent) => ({ x: event.offsetX, y: event.offsetY });
+const getCords = (event: MouseEvent | TouchEvent) =>
+{
+    if (event instanceof MouseEvent)
+     return { x: event.offsetX, y: event.offsetY };
+    if (event instanceof TouchEvent && event.touches[0])
+        return {x: event.touches[0].clientX, y: event.touches[0].clientY}
+};
 const regexHEX = /^#[abcdef0-9]{1,6}$/i;
 
 export class Artist {
@@ -121,6 +127,23 @@ export class Artist {
 
             if (this.ctx)
                 this.ctx.beginPath();
+        });
+
+        this.canvas.addEventListener('touchstart', event => {
+            if (this.ctx) this.ctx.beginPath();
+            this._setCords(event);
+            this.setMouseDown(true);
+        });
+
+        this.canvas.addEventListener('touchmove', event => {
+            this._setCords(event);
+            this._drawLine();
+        });
+
+        this.canvas.addEventListener('touchend', event => {
+            this._setCords(event);
+            this.setMouseDown(false);
+            if (this.ctx) this.ctx.beginPath();
         });
     }
 
@@ -333,12 +356,14 @@ export class Artist {
      *                              |Must return boolean. If function return false method "_setCords" won't work
      * @return {void}
      */
-    private _setCords (event: MouseEvent, callback: (cords?: {x: number, y: number}) => (boolean) = () => true) :void
+    private _setCords (event: MouseEvent | TouchEvent, callback: (cords?: {x: number, y: number}) => (boolean) = () => true) :void
     {
         if (callback)
             if (!callback({x: this.mouse.x, y: this.mouse.y})) return;
 
         const cords = getCords(event);
+
+        if (!cords) return;
 
         this.mouse.x = cords.x;
         this.mouse.y = cords.y;
