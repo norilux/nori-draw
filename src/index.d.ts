@@ -1,4 +1,4 @@
-declare module "artist2"
+declare module "nori-draw"
 {
     interface Options {
         width?: number;
