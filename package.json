@@ -14,8 +14,8 @@
   "description": "Module for create canvas in your html element and manipulate it. Just draw!",
   "homepage": "https://github.com/norilux/nori-draw",
   "types": "./src/index.d.ts",
-  "version": "1.0.10",
-  "main": "src/index.js",
+  "version": "1.0.11",
+  "main": "build/index.js",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p ."
