@@ -1,17 +1,31 @@
 {
-  "name": "artst",
-  "version": "1.0.0",
+  "name": "nori-draw",
+  "author": {
+    "name": "NORI",
+    "email": "noriluxxx@gmail.com"
+  },
+  "keywords": [
+    "canvas",
+    "ctx",
+    "context",
+    "draw",
+    "nori"
+  ],
+  "description": "Module for create canvas in your html element and manipulate it. Just draw!",
+  "homepage": "https://github.com/KamikariCat/artist2",
+  "types": "./src/index.d.ts",
+  "version": "1.0.7",
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p ."
   },
   "devDependencies": {
-    "@types/node": "^13.1.8",
-    "nodemon": "^2.0.2",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.7.5",
-    "webpack": "^4.41.5"
+    "@types/node": "^13.13.15",
+    "nodemon": "^2.0.4",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1"
   },
   "dependencies": {
     "uglify-es": "^3.3.9"

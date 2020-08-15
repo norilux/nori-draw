@@ -20,7 +20,7 @@ const getCords = (event: MouseEvent | TouchEvent) =>
 };
 const regexHEX = /^#[abcdef0-9]{1,6}$/i;
 
-export class Artist {
+export default class Artist {
     wrapper: HTMLDivElement;
     canvas: HTMLCanvasElement | undefined;
     width: number;
@@ -30,6 +30,7 @@ export class Artist {
     ctx: CanvasRenderingContext2D | undefined;
     lineWidth: number;
     lineColor: string;
+    drawCallback?: (object: Artist) => void;
     border: {
         size: number;
         color: string;
@@ -178,6 +179,9 @@ export class Artist {
 
         this.ctx.beginPath();
         this.ctx.moveTo(this.mouse.x, this.mouse.y)
+
+        if (this.drawCallback)
+            this.drawCallback(this)
     }
 
     /**
@@ -501,5 +505,11 @@ export class Artist {
 
         if (this.ctx)
             this.ctx.beginPath();
+    }
+
+    public addCallbackToDraw (callback: (object: Artist) => {}) : void
+    {
+        this.drawCallback = callback;
+        this.drawCallback = callback;
     }
 }
