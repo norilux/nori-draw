@@ -6,7 +6,7 @@ yarn build
 
 your file in created dist folder
 ```
-import Artist from 'nori-artist'
+import Draw from 'nori-draw'
  
 const div = document.getElementById('id');
 const options = {
@@ -22,5 +22,5 @@ const options = {
         borderStyle: 'solid'
 }
  
-const artist = new Artist(div, options);
+const draw = new Draw(div, options);
 ```

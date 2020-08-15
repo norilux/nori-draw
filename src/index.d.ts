@@ -13,7 +13,7 @@ declare module "nori-draw"
         borderStyle?: string;
     }
 
-    export default class Arist
+    export default class Draw
     {
         constructor (wrapper: HTMLDivElement, options: Options)
         public wrapper: HTMLDivElement;
