@@ -1,8 +1,10 @@
 # artist2
 
-run:
-yarn &&
-yarn build
+yarn `yarn add nori-draw`
+npm  `npm install nori-draw`
+
+#### Using
+`import ND from 'nori-draw'`
 
 your file in created dist folder
 ```
