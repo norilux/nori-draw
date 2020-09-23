@@ -1,10 +1,9 @@
-# artist2
+# NoriDraw
 
 yarn `yarn add nori-draw`
 npm  `npm install nori-draw`
 
-#### Using
-`import ND from 'nori-draw'`
+### Using
 
 your file in created dist folder
 ```
